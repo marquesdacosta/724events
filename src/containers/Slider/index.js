@@ -7,9 +7,11 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
-  const byDateDesc = data?.focus.sort((evtA, evtB) =>
+  const byDateDesc = data?.focus ? data.focus.sort((evtA, evtB) => // rajout de data?.focus ? pour s'assurer que data.focus est defini avant de l'utiliser.
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
-  ).reverse(); // ajout du reverse pour passé en ordre décroissant
+  ).reverse() : []; // ajout du reverse pour passé en ordre décroissant.
+
+
   const nextCard = () => {
     setTimeout(
       () => setIndex(index < byDateDesc.length -1 ? index + 1 : 0), // ajout du -1 pour eviter que l'index soit egale a 3 
@@ -18,13 +20,12 @@ const Slider = () => {
   };
   useEffect(() => {
     nextCard();
-  });
+  }, [index]); // rajout de [index] , nextCard appeller toutes les 5 secondes , ou a chaque fois que index change de valeur.
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
-        <>
+          <div key={event.title}>
           <div
-            key={event.title}
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
             }`}
@@ -42,15 +43,16 @@ const Slider = () => {
             <div className="SlideCard__pagination">
               {byDateDesc.map((_, radioIdx) => (
                 <input
-                  key={`${event.id}`}
+                  key={radioIdx}
                   type="radio"
+                  readOnly
                   name="radio-button"
                   checked={index === radioIdx} // ajout de index pour prendre en compte l'index , idx etant defini dans la fonction .map et donc pas disponible ici
                 />
               ))}
             </div>
           </div>
-        </>
+          </div> // Suppression du fragment vide , afin que les clés des enfants des boucles .map soient correctement rendu
       ))}
     </div>
   );
