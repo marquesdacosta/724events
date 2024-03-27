@@ -13,7 +13,6 @@ const EventCard = ({
   ...props
 }) => {
   console.log("Date value:", date);
-  console.log("Month:", getMonth(date));
   return (
     <div
       data-testid="card-testid"

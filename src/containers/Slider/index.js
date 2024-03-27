@@ -7,20 +7,21 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
-  const byDateDesc = data?.focus ? data.focus.sort((evtA, evtB) => // rajout de data?.focus ? pour s'assurer que data.focus est defini avant de l'utiliser.
+  const byDateDesc = data?.focus ? data.focus.sort((evtA, evtB) => // rajout de data?.focus ? pour s'assurer que byDateesc ne renverra pas d'erreur si data.focus est undefined.
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
   ).reverse() : []; // ajout du reverse pour passé en ordre décroissant.
 
+  console.log("byDateDesc:", byDateDesc);
 
   const nextCard = () => {
     setTimeout(
-      () => setIndex(index < byDateDesc.length -1 ? index + 1 : 0), // ajout du -1 pour eviter que l'index soit egale a 3 
+      () => setIndex(index < byDateDesc.length  ? index + 1 : 0), // ajout du -1 pour eviter que l'index soit egale a 3 
       5000
     );
   };
   useEffect(() => {
     nextCard();
-  }, [index]); // rajout de [index] , nextCard appeller toutes les 5 secondes , ou a chaque fois que index change de valeur.
+  });
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
@@ -43,9 +44,9 @@ const Slider = () => {
             <div className="SlideCard__pagination">
               {byDateDesc.map((_, radioIdx) => (
                 <input
-                  key={radioIdx}
+                  key={radioIdx} // Utilisation de l'index des puces pour les key
                   type="radio"
-                  readOnly
+                  readOnly  // Ajout du readOnly pour que l'input soit en lecture seul (l'utilisateur ne pourra pas modifié la valeur et donc naviguer a l'aide des puces)
                   name="radio-button"
                   checked={index === radioIdx} // ajout de index pour prendre en compte l'index , idx etant defini dans la fonction .map et donc pas disponible ici
                 />
